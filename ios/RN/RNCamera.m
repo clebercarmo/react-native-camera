@@ -62,6 +62,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
         self.previewLayer.needsDisplayOnBoundsChange = YES;
 #endif
         self.paused = NO;
+        self.isCroppingScanArea = NO;
         [self changePreviewOrientation:[UIApplication sharedApplication].statusBarOrientation];
         [self initializeCaptureSessionInput];
         [self startSession];
@@ -634,13 +635,36 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
                 // Manually restarting the session since it must
                 // have been stopped due to an error.
                 [strongSelf.session startRunning];
+                [strongSelf cropScanArea];
                 [strongSelf onReady:nil];
             });
         }]];
 
         [self.session startRunning];
+        [self cropScanArea];
         [self onReady:nil];
     });
+}
+
+- (void)cropScanArea {
+  // we only want to scan specified area
+  // NOTE; Seems we can only set the actual rect after session started, else it doesn't work
+  if (self.isCroppingScanArea) {
+    NSNumber *imageWidth = [NSNumber numberWithFloat:self.previewLayer.frame.size.width];
+    NSNumber *imageHeight = [NSNumber numberWithFloat:self.previewLayer.frame.size.height];
+    double imageUseWidth = [imageWidth doubleValue];
+    double imageUseHeight = [imageHeight doubleValue];
+    
+    double cropWidth = imageUseWidth * self.cropScanAreaPercentageWidth;
+    double cropHeight = imageUseHeight * self.cropScanAreaPercentageHeight;
+    double cropX = (imageUseWidth/2)-(cropWidth/2);
+    double cropY = (imageUseHeight/2)-(cropHeight/2);
+    
+    CGRect scanLimit = CGRectMake(cropX, cropY, cropWidth, cropHeight);
+    CGRect scanBarcodeArea = [_previewLayer metadataOutputRectOfInterestForRect:scanLimit];
+    
+    [self.metadataOutput setRectOfInterest:scanBarcodeArea];
+  }
 }
 
 - (void)stopSession
