@@ -157,9 +157,9 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
 {
     dispatch_async(self.sessionQueue, ^{
         [self initializeCaptureSessionInput];
-        if (!self.session.isRunning) {
+        //if (!self.session.isRunning) {
             [self startSession];
-        }
+        //}
     });
 }
 
@@ -654,15 +654,15 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
     NSNumber *imageHeight = [NSNumber numberWithFloat:self.previewLayer.frame.size.height];
     double imageUseWidth = [imageWidth doubleValue];
     double imageUseHeight = [imageHeight doubleValue];
-    
+
     double cropWidth = imageUseWidth * self.cropScanAreaPercentageWidth;
     double cropHeight = imageUseHeight * self.cropScanAreaPercentageHeight;
     double cropX = (imageUseWidth/2)-(cropWidth/2);
     double cropY = (imageUseHeight/2)-(cropHeight/2);
-    
+
     CGRect scanLimit = CGRectMake(cropX, cropY, cropWidth, cropHeight);
     CGRect scanBarcodeArea = [_previewLayer metadataOutputRectOfInterestForRect:scanLimit];
-    
+
     [self.metadataOutput setRectOfInterest:scanBarcodeArea];
   }
 }
@@ -834,11 +834,11 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
         case AVAudioSessionInterruptionTypeBegan:
             [self bridgeDidBackground: notification];
             break;
-            
+
         case AVAudioSessionInterruptionTypeEnded:
             [self bridgeDidForeground: notification];
             break;
-            
+
         default:
             break;
     }
@@ -1006,7 +1006,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
         void (^resolveBlock)(void) = ^() {
             self.videoRecordedResolve(result);
         };
-        
+
         result[@"uri"] = outputFileURL.absoluteString;
         result[@"videoOrientation"] = @([self.orientation integerValue]);
         result[@"deviceOrientation"] = @([self.deviceOrientation integerValue]);
@@ -1133,7 +1133,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
                 [self stopFaceDetection];
                 return;
             }
-            
+
             NSDictionary *rgbOutputSettings = [NSDictionary
                 dictionaryWithObject:[NSNumber numberWithInt:kCMPixelFormat_32BGRA]
                                 forKey:(id)kCVPixelBufferPixelFormatTypeKey];
@@ -1170,7 +1170,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
 }
 
 - (void)updateFaceDetectionLandmarks:(id)requestedLandmarks
-{   
+{
     [self.faceDetector setLandmarksMode:requestedLandmarks queue:self.sessionQueue];
 }
 
@@ -1206,7 +1206,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
                 [self stopBarcodeDetection];
                 return;
             }
-            
+
             NSDictionary *rgbOutputSettings = [NSDictionary
                                                dictionaryWithObject:[NSNumber numberWithInt:kCMPixelFormat_32BGRA]
                                                forKey:(id)kCVPixelBufferPixelFormatTypeKey];
